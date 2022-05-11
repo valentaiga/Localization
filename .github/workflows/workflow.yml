@@ -31,6 +31,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: nugetPackage
+        retention-days: 5
         path: src/Localization/bin/Release/ 
       
       
@@ -44,7 +45,7 @@ jobs:
       uses: actions/upload-artifact@v3.0.0
       with:
         name: nugetPackage
-        path: /
+        path: nugetPackage
     - name: Prep packages
       run: dotnet nuget add source --username valentaiga --password ${{ secrets.TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/valentaiga/index.json"
     - name: Publish to GitHub packages 
