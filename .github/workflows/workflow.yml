@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore src/
     - name: Build
-      run: dotnet build src --no-restore
+      run: dotnet build src --no-restore -c Release
     - name: Test
       run: dotnet test src --no-build --verbosity normal
       
