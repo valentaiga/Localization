@@ -49,7 +49,7 @@ jobs:
     - name: Prep packages
       run: dotnet nuget add source --username valentaiga --password ${{ secrets.TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/valentaiga/index.json"
     - name: Publish to GitHub packages 
-      run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
+      run: dotnet nuget push nugetPackage/Localization.1.0.0.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
         
       #create release
     
