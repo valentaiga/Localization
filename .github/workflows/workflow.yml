@@ -23,14 +23,49 @@ jobs:
       run: dotnet build src --no-restore
     - name: Test
       run: dotnet test src --no-build --verbosity normal
-  nuget-publish:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
+      
+      # pack project
     - name: Pack Localization
       run: dotnet pack src/Localization/Localization.csproj -c Release
+    - name: Upload NuGet package to GitHub
+      uses: actions/upload-artifact@v2
+      with:
+        name: nugetPackage
+        path: src/Localization/Localization/bin/Release/ 
+      
+      
+  nuget-publish:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master' # only run job if on the main branch   
+    
+    steps:
+    - name: Download nuget package artifact
+      uses: actions/download-artifact@v1.0.0
+      with:
+        name: nugetPackage
     - name: Prep packages
       run: dotnet nuget add source --username valentaiga --password ${{ secrets.TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/valentaiga/index.json"
     - name: Publish to GitHub packages 
-      run: dotnet nuget push Localization/Localization/bin/Release/*.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
-
+      run: dotnet nuget push nugetPackage/*.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
+        
+      #create release
+    
+        
+#    - uses: actions/checkout@v3
+#    - name: Restore dependencies
+#      run: dotnet restore src/
+#      
+#    - name: Download nuget package artifact
+#      uses: actions/download-artifact@v1.0.0
+#      with:
+#        name: nugetPackage
+#      
+#      
+#      
+#    - name: Pack Localization
+#      run: dotnet pack src/Localization/Localization.csproj -c Release
+#    - name: Prep packages
+#      run: dotnet nuget add source --username valentaiga --password ${{ secrets.TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/valentaiga/index.json"
+#    - name: Publish to GitHub packages 
+#      run: dotnet nuget push Localization/Localization/bin/Release/*.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
