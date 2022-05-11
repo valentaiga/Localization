@@ -18,19 +18,19 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build src --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-
-    # nuget publish
+      run: dotnet test src --no-build --verbosity normal
+  nuget-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
     - name: Pack Localization
       run: dotnet pack src/Localization/Localization.csproj -c Release
-
     - name: Prep packages
       run: dotnet nuget add source --username valentaiga --password ${{ secrets.TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/valentaiga/index.json"
-
     - name: Publish to GitHub packages 
       run: dotnet nuget push Localization/Localization/bin/Release/*.nupkg --api-key ${{ secrets.TOKEN }}  --source "github"
 
